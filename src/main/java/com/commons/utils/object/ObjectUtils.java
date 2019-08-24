@@ -40,10 +40,10 @@ public class ObjectUtils {
                 continue;
             }
 
-            if (!isWrapperType(srcWrapPropertyValue.getClass())) {
-                BeanUtils.copyProperties(srcWrapPropertyValue, destWrap.getPropertyValue(property), getNullPropertyNames(srcWrapPropertyValue));
-            } else {
+            if (isWrapperType(srcWrapPropertyValue.getClass())) {
                 destWrap.setPropertyValue(property, srcWrap.getPropertyValue(property));
+            } else {
+                BeanUtils.copyProperties(srcWrapPropertyValue, destWrap.getPropertyValue(property), getNullPropertyNames(srcWrapPropertyValue));
 
             }
 
