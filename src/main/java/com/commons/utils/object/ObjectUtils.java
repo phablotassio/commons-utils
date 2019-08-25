@@ -20,11 +20,11 @@ public class ObjectUtils {
 
     public static void applyChangesOnObject(Object source, Object target) {
 
-        if (source == null || target == null){
+        if (source == null || target == null) {
             throw new IllegalArgumentException(Message.OBJECTS_CANNOT_BE_NULL.getMessage());
         }
 
-        if(target.getClass() != source.getClass()){
+        if (target.getClass() != source.getClass()) {
             throw new IllegalArgumentException(Message.OBJECTS_SAME_INTANCE.getMessage());
         }
 
@@ -36,15 +36,35 @@ public class ObjectUtils {
 
         for (String property : fieldNames) {
             final Object srcWrapPropertyValue = srcWrap.getPropertyValue(property);
-            if (srcWrapPropertyValue instanceof Collection<?>) {
-                continue;
-            }
+            final Object destWrapPropertyValue = destWrap.getPropertyValue(property);
+            if (srcWrapPropertyValue instanceof List<?> && destWrapPropertyValue instanceof List<?>) {
+                List<?> srcList = (List<?>) srcWrapPropertyValue;
+                List<?> destList = (List<?>) destWrapPropertyValue;
+                if (srcList.size() == destList.size()) {
 
-            if (isWrapperType(srcWrapPropertyValue.getClass())) {
+                    for (int i = 0; i < srcList.size(); i++) {
+                        BeanWrapper _srcWrap = PropertyAccessorFactory.forBeanPropertyAccess(srcList.get(i));
+                        BeanWrapper _destWrap = PropertyAccessorFactory.forBeanPropertyAccess(destList.get(i));
+                        _destWrap.setAutoGrowNestedPaths(true);
+
+                        final List<String> _fieldNames = Stream.of(_srcWrap.getPropertyDescriptors()).map(FeatureDescriptor::getName).filter(propertyName -> !propertyName.equals("class")).collect(toList());
+
+                        for (String _property : _fieldNames) {
+
+                            final Object _srcWrapPropertyValue = _srcWrap.getPropertyValue(_property);
+
+                            if (_srcWrapPropertyValue != null && isWrapperType(_srcWrapPropertyValue.getClass())) {
+                                _destWrap.setPropertyValue(_property, _srcWrap.getPropertyValue(_property));
+                            } else if (_srcWrapPropertyValue != null) {
+                                BeanUtils.copyProperties(_srcWrapPropertyValue, _destWrap.getPropertyValue(_property), getNullPropertyNames(_srcWrapPropertyValue));
+                            }
+                        }
+                    }
+                }
+            } else if (srcWrapPropertyValue != null && isWrapperType(srcWrapPropertyValue.getClass())) {
                 destWrap.setPropertyValue(property, srcWrap.getPropertyValue(property));
-            } else {
+            } else if (srcWrapPropertyValue != null) {
                 BeanUtils.copyProperties(srcWrapPropertyValue, destWrap.getPropertyValue(property), getNullPropertyNames(srcWrapPropertyValue));
-
             }
 
         }

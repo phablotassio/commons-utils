@@ -1,13 +1,18 @@
 package com.commons.utils.dtos;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PersonDto {
 
     private String name;
-    private EmailDto emailDto;
+    //private EmailDto emailDto;
+    private List<EmailDto> emails;
 
     public PersonDto(String name, EmailDto emailDto) {
         this.name = name;
-        this.emailDto = emailDto;
+        //this.emailDto = emailDto;
+        this.emails = Arrays.asList(emailDto);
     }
 
     public String getName() {
@@ -18,11 +23,7 @@ public class PersonDto {
         this.name = name;
     }
 
-    public EmailDto getEmailDto() {
-        return emailDto;
-    }
-
-    public void setEmailDto(EmailDto emailDto) {
-        this.emailDto = emailDto;
+    public List<EmailDto> getEmails() {
+        return emails;
     }
 }
