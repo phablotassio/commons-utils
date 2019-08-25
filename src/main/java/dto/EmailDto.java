@@ -1,4 +1,5 @@
-package com.commons.utils.dtos;
+package dto;
+
 
 public class EmailDto {
 

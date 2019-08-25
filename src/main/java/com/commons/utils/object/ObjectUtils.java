@@ -7,7 +7,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 
 import java.beans.FeatureDescriptor;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -37,6 +36,7 @@ public class ObjectUtils {
         for (String property : fieldNames) {
             final Object srcWrapPropertyValue = srcWrap.getPropertyValue(property);
             final Object destWrapPropertyValue = destWrap.getPropertyValue(property);
+
             if (srcWrapPropertyValue instanceof List<?> && destWrapPropertyValue instanceof List<?>) {
                 List<?> srcList = (List<?>) srcWrapPropertyValue;
                 List<?> destList = (List<?>) destWrapPropertyValue;
@@ -50,9 +50,7 @@ public class ObjectUtils {
                         final List<String> _fieldNames = Stream.of(_srcWrap.getPropertyDescriptors()).map(FeatureDescriptor::getName).filter(propertyName -> !propertyName.equals("class")).collect(toList());
 
                         for (String _property : _fieldNames) {
-
                             final Object _srcWrapPropertyValue = _srcWrap.getPropertyValue(_property);
-
                             if (_srcWrapPropertyValue != null && isWrapperType(_srcWrapPropertyValue.getClass())) {
                                 _destWrap.setPropertyValue(_property, _srcWrap.getPropertyValue(_property));
                             } else if (_srcWrapPropertyValue != null) {
@@ -66,7 +64,6 @@ public class ObjectUtils {
             } else if (srcWrapPropertyValue != null) {
                 BeanUtils.copyProperties(srcWrapPropertyValue, destWrap.getPropertyValue(property), getNullPropertyNames(srcWrapPropertyValue));
             }
-
         }
 
     }

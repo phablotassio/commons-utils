@@ -1,4 +1,4 @@
-package com.commons.utils.dtos;
+package dto;
 
 public enum Type {
 
